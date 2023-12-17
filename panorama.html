@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="tour-3d">
+      <div class="wrapper">
+        <h2 class="black-title">
+          <span
+            data-aos="flip-up"
+            data-aos-offset="-100"
+            data-aos-delay="100"
+            data-aos-duration="800"
+            data-aos-easing="ease-in-out"
+            >3d тур</span
+          >
+        </h2>
+        <div class="tour-3d-wrap">
+          <div class="panorama_container">
+            <div id="panorama"></div>
+            <div class="section_container">
+              <? $cnt = 1 ?>
+              <? foreach ($arResult['THREED_TOUR']['PANORAMS']['VALUE'] as $panoram): ?>
+              <div
+                id="sec<?= $cnt ?>"
+                class="sections <?= ($cnt == 1) ? 'active' : '' ?>"
+              >
+                <?= $panoram['PANORAM'] ?>
+              </div>
+              <? $cnt++; ?>
+              <? endforeach; ?>
+            </div>
+          </div>
+          <div class="tour-3d-info">
+            <h2 class="black-title">
+              <span
+                data-aos="flip-up"
+                data-aos-offset="-100"
+                data-aos-delay="300"
+                data-aos-duration="800"
+                data-aos-easing="ease-in-out"
+                ><?= $arResult['NAME'] ?></span
+              >
+            </h2>
+            <div class="info-wrap">
+              <div class="info-items">
+                <? foreach ($arResult['THREED_TOUR']['COMPLECTS']['VALUE'] as $complect): ?>
+                <div class="info-item">
+                  <div class="img-wrap">
+                    <img
+                      src="<?=CFile::GetPath($complect['COMPLECT_IMG'])?>"
+                      alt="<?=$complect['COMPLECT']?>"
+                    />
+                  </div>
+                  <div class="text-wrap">
+                    <a><?=$complect['COMPLECT']?></a>
+                    <span><?=$complect['COMPLECT_SUBTITLE']?></span>
+                  </div>
+                </div>
+                <? endforeach; ?>
+              </div>
+            </div>
+            <a href="#leave-popup" class="style3-btn popup"
+              >получить предложение</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /*const images = [
+          <?foreach ($arResult['THREED_TOUR']['PANORAMS']['VALUE'] as $panoram):?>
+              <?=CFile::GetPath($panoram['PANORAM_IMG'])?>,
+          <?endforeach;?>
+      ];*/
+
+      <?php
+      $jsItems = array();
+      foreach($arResult['THREED_TOUR']['PANORAMS']['VALUE'] as $panoram) {
+          $jsItems[] = CFile::GetPath($panoram['PANORAM_IMG']);
+      }
+      echo 'const images = '.json_encode($jsItems).';';
+      ?>
+
+      console.log(images)
+
+      const sectionContainers = document.querySelectorAll(".sections");
+
+      const generatorPanorama = (index) => {
+          if (currentIndex === index) {
+              return;
+          }
+          pannellum.viewer("panorama", {
+              type: "equirectangular",
+              panorama: images[index],
+              autoLoad: true,
+              showControls: false,
+              compass: false,
+          });
+          currentIndex = index;
+      };
+
+      let currentIndex = null;
+
+      sectionContainers.forEach((section, index) => {
+          section.addEventListener("click", () => {
+              generatorPanorama(index);
+          });
+      });
+
+      generatorPanorama(0);
+    </script>
+  </body>
+</html>
